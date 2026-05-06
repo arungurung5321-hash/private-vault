@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault — Create Account</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-brand">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🔐</div>
+      <span class="auth-logo-name">Vault</span>
+    </div>
+    <h1 class="auth-headline">One vault for<br><em>everything</em><br>important.</h1>
+    <p class="auth-tagline">AES-256 encrypted. JWT secured. All yours.</p>
+    <div class="auth-features">
+      <div class="auth-feature"><div class="auth-feature-icon">🛡️</div><span>AES-256-GCM encryption</span></div>
+      <div class="auth-feature"><div class="auth-feature-icon">🔄</div><span>Rotating JWT tokens</span></div>
+      <div class="auth-feature"><div class="auth-feature-icon">🗂️</div><span>Folders & tags</span></div>
+      <div class="auth-feature"><div class="auth-feature-icon">🗑️</div><span>Trash & restore</span></div>
+    </div>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-form-box">
+      <h2 class="auth-form-title">Create account</h2>
+      <p class="auth-form-subtitle">Start securing your digital life</p>
+      <div id="error-msg" class="auth-error hidden"><span>⚠</span><span id="error-text"></span></div>
+      <form class="auth-form" id="register-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input class="form-input" id="name" name="name" type="text" placeholder="John Doe" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email *</label>
+          <input class="form-input" id="email" name="email" type="email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password * <span style="color:var(--text-muted);font-weight:400">(min 8 chars)</span></label>
+          <div class="input-wrapper">
+            <input class="form-input" id="password" name="password" type="password" placeholder="Strong password" required>
+            <button type="button" class="input-action" id="toggle-pw">👁</button>
+          </div>
+        </div>
+        <div id="strength-wrap" style="display:none">
+          <div style="height:4px;background:var(--bg-raised);border-radius:99px;overflow:hidden">
+            <div id="strength-bar" style="height:100%;width:0%;border-radius:99px;transition:all 0.3s"></div>
+          </div>
+          <div id="strength-label" style="font-size:0.75rem;color:var(--text-muted);margin-top:4px"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirm">Confirm Password *</label>
+          <input class="form-input" id="confirm" name="confirm" type="password" placeholder="Repeat password" required>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" type="submit" id="submit-btn">Create My Vault</button>
+      </form>
+      <p class="auth-switch" style="margin-top:20px">Already have an account? <a href="login.html">Sign in</a></p>
+    </div>
+  </div>
+</div>
+<div id="toast-container"></div>
+<script src="../js/api.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+  if (Auth.isLoggedIn()) window.location.href = "dashboard.html";
+  const form = document.getElementById("register-form");
+  const pwInput = document.getElementById("password");
+  const strengthBar = document.getElementById("strength-bar");
+  const strengthLabel = document.getElementById("strength-label");
+  const strengthWrap = document.getElementById("strength-wrap");
+  document.getElementById("toggle-pw").addEventListener("click", function() {
+    pwInput.type = pwInput.type === "password" ? "text" : "password";
+    this.textContent = pwInput.type === "password" ? "👁" : "🙈";
+  });
+  pwInput.addEventListener("input", () => {
+    const pw = pwInput.value;
+    if (!pw) { strengthWrap.style.display = "none"; return; }
+    strengthWrap.style.display = "block";
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (pw.length >= 12) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    const levels = [
+      { color: "#e05252", label: "Weak", pct: "20%" },
+      { color: "#e08c52", label: "Fair", pct: "40%" },
+      { color: "#c9a84c", label: "Good", pct: "60%" },
+      { color: "#4ade80", label: "Strong", pct: "80%" },
+      { color: "#3dd9c5", label: "Excellent", pct: "100%" },
+    ];
+    const lvl = levels[Math.min(score - 1, 4)] || levels[0];
+    strengthBar.style.width = lvl.pct;
+    strengthBar.style.background = lvl.color;
+    strengthLabel.textContent = lvl.label;
+    strengthLabel.style.color = lvl.color;
+  });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorMsg = document.getElementById("error-msg");
+    errorMsg.classList.add("hidden");
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const password = form.password.value;
+    const confirm = form.confirm.value;
+    if (!email || !password) { errorMsg.classList.remove("hidden"); errorMsg.querySelector("#error-text").textContent = "Email and password are required."; return; }
+    if (password.length < 8) { errorMsg.classList.remove("hidden"); errorMsg.querySelector("#error-text").textContent = "Password must be at least 8 characters."; return; }
+    if (password !== confirm) { errorMsg.classList.remove("hidden"); errorMsg.querySelector("#error-text").textContent = "Passwords do not match."; return; }
+    const btn = document.getElementById("submit-btn");
+    btn.disabled = true; btn.innerHTML = "<div class='spinner'></div> Creating vault…";
+    try {
+      await api.auth.register(email, password, name);
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      errorMsg.classList.remove("hidden"); errorMsg.querySelector("#error-text").textContent = err.message || "Registration failed.";
+      btn.disabled = false; btn.textContent = "Create My Vault";
+    }
+  });
+</script>
+</body>
+</html>

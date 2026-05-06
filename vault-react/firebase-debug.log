@@ -1,0 +1,44 @@
+[debug] [2026-04-30T00:40:03.197Z] ----------------------------------------------------------------------
+[debug] [2026-04-30T00:40:03.202Z] Command:       /opt/homebrew/Cellar/node/25.9.0_2/bin/node /opt/homebrew/bin/firebase projects:create private-vault-arun --display-name Private Vault
+[debug] [2026-04-30T00:40:03.202Z] CLI Version:   15.16.0
+[debug] [2026-04-30T00:40:03.202Z] Platform:      darwin
+[debug] [2026-04-30T00:40:03.202Z] Node Version:  v25.9.0
+[debug] [2026-04-30T00:40:03.202Z] Time:          Wed Apr 29 2026 19:40:03 GMT-0500 (Central Daylight Time)
+[debug] [2026-04-30T00:40:03.202Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-30T00:40:03.207Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-30T00:40:03.207Z] > authorizing via signed-in user (arungurung5321@gmail.com)
+[debug] [2026-04-30T00:40:03.210Z] Checked if tokens are valid: true, expires at: 1777513172657
+[debug] [2026-04-30T00:40:03.210Z] Checked if tokens are valid: true, expires at: 1777513172657
+[debug] [2026-04-30T00:40:03.210Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-04-30T00:40:03.210Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"private-vault-arun","name":"Private Vault"}
+[debug] [2026-04-30T00:40:03.519Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 409
+[debug] [2026-04-30T00:40:03.519Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"error":{"code":409,"message":"Requested entity already exists","status":"ALREADY_EXISTS"}}
+[debug] [2026-04-30T00:40:03.690Z] FirebaseError: Request to https://cloudresourcemanager.googleapis.com/v1/projects had HTTP Error: 409, Requested entity already exists
+    at responseToError (/opt/homebrew/lib/node_modules/firebase-tools/lib/responseToError.js:53:12)
+    at RetryOperation._fn (/opt/homebrew/lib/node_modules/firebase-tools/lib/apiv2.js:333:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to create project because there is already a project with ID private-vault-arun. Please try again with a unique project ID.
+[debug] [2026-04-30T00:43:43.538Z] ----------------------------------------------------------------------
+[debug] [2026-04-30T00:43:43.544Z] Command:       /opt/homebrew/Cellar/node/25.9.0_2/bin/node /opt/homebrew/bin/firebase projects:addfirebase private-vault-arun
+[debug] [2026-04-30T00:43:43.544Z] CLI Version:   15.16.0
+[debug] [2026-04-30T00:43:43.544Z] Platform:      darwin
+[debug] [2026-04-30T00:43:43.545Z] Node Version:  v25.9.0
+[debug] [2026-04-30T00:43:43.545Z] Time:          Wed Apr 29 2026 19:43:43 GMT-0500 (Central Daylight Time)
+[debug] [2026-04-30T00:43:43.545Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-30T00:43:43.550Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-30T00:43:43.550Z] > authorizing via signed-in user (arungurung5321@gmail.com)
+[debug] [2026-04-30T00:43:43.552Z] Checked if tokens are valid: true, expires at: 1777513172657
+[debug] [2026-04-30T00:43:43.553Z] Checked if tokens are valid: true, expires at: 1777513172657
+[debug] [2026-04-30T00:43:43.553Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/private-vault-arun:addFirebase [none]
+[debug] [2026-04-30T00:43:43.878Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/private-vault-arun:addFirebase 403
+[debug] [2026-04-30T00:43:43.878Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/private-vault-arun:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-04-30T00:43:43.879Z] Request to https://firebase.googleapis.com/v1beta1/projects/private-vault-arun:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-04-30T00:43:44.086Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/private-vault-arun:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (/opt/homebrew/lib/node_modules/firebase-tools/lib/responseToError.js:53:12)
+    at RetryOperation._fn (/opt/homebrew/lib/node_modules/firebase-tools/lib/apiv2.js:333:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault — Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+<div class="app-layout" id="app">
+
+  <!-- ════════════ SIDEBAR ════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-icon">🔐</div>
+      <span class="sidebar-logo-name">Vault</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Collection</div>
+      <div class="nav-item active" data-view="all">
+        <span class="nav-item-icon">🏠</span><span>All Items</span>
+        <span class="nav-item-count" id="count-all">—</span>
+      </div>
+      <div class="nav-item" data-view="favorites">
+        <span class="nav-item-icon">★</span><span>Favourites</span>
+        <span class="nav-item-count" id="count-fav">—</span>
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px">By Type</div>
+      <div class="nav-item" data-view="password">
+        <span class="nav-item-icon">🔑</span><span>Passwords</span>
+        <span class="nav-item-count" id="count-password">—</span>
+      </div>
+      <div class="nav-item" data-view="secret">
+        <span class="nav-item-icon">🗝️</span><span>Secrets</span>
+        <span class="nav-item-count" id="count-secret">—</span>
+      </div>
+      <div class="nav-item" data-view="note">
+        <span class="nav-item-icon">📋</span><span>Notes</span>
+        <span class="nav-item-count" id="count-note">—</span>
+      </div>
+      <div class="nav-item" data-view="card">
+        <span class="nav-item-icon">💳</span><span>Cards</span>
+        <span class="nav-item-count" id="count-card">—</span>
+      </div>
+      <div class="nav-item" data-view="identity">
+        <span class="nav-item-icon">🪪</span><span>Identities</span>
+        <span class="nav-item-count" id="count-identity">—</span>
+      </div>
+      <div class="nav-item" data-view="media">
+        <span class="nav-item-icon">🖼️</span><span>Media</span>
+        <span class="nav-item-count" id="count-media">—</span>
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px">Other</div>
+      <div class="nav-item" id="nav-requests">
+        <span class="nav-item-icon">📬</span><span>Access Requests</span>
+        <span class="nav-item-count" id="count-requests"
+          style="background:rgba(224,82,82,0.15);color:var(--red);border-color:rgba(224,82,82,0.3);display:none">0</span>
+        <span id="pending-dot" class="pending-dot" style="display:none"></span>
+      </div>
+      <div class="nav-item" data-view="trash">
+        <span class="nav-item-icon">🗑</span><span>Trash</span>
+        <span class="nav-item-count" id="count-trash">—</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name">Loading…</div>
+          <div class="user-role">🔒 secured vault</div>
+        </div>
+        <button class="btn btn-icon" id="logout-btn" title="Logout" style="flex-shrink:0">⏏</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ════════════ MAIN ════════════ -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title" id="view-title">All Items</div>
+      <div class="search-bar">
+        <span class="search-bar-icon">🔍</span>
+        <input type="search" id="search-input" placeholder="Search vault…">
+      </div>
+      <button class="btn btn-primary btn-sm" id="add-btn">＋ Add Item</button>
+    </header>
+
+    <div class="filter-tabs" id="filter-tabs">
+      <div class="filter-tab active" data-type="">All</div>
+      <div class="filter-tab" data-type="password">🔑 Passwords</div>
+      <div class="filter-tab" data-type="secret">🗝️ Secrets</div>
+      <div class="filter-tab" data-type="note">📋 Notes</div>
+      <div class="filter-tab" data-type="card">💳 Cards</div>
+      <div class="filter-tab" data-type="identity">🪪 Identities</div>
+      <div class="filter-tab" data-type="media">🖼️ Media</div>
+    </div>
+
+    <div style="display:flex;flex:1;overflow:hidden">
+      <div class="items-area" id="items-area">
+
+        <div class="stats-bar" id="stats-bar">
+          <div class="stat-card" data-view="all">
+            <div class="stat-icon gold">🔐</div>
+            <div><div class="stat-count" id="stat-total">—</div><div class="stat-label">Total items</div></div>
+          </div>
+          <div class="stat-card" data-view="password">
+            <div class="stat-icon gold">🔑</div>
+            <div><div class="stat-count" id="stat-passwords">—</div><div class="stat-label">Passwords</div></div>
+          </div>
+          <div class="stat-card" data-view="secret">
+            <div class="stat-icon teal">🗝️</div>
+            <div><div class="stat-count" id="stat-secrets">—</div><div class="stat-label">Secrets</div></div>
+          </div>
+          <div class="stat-card" data-view="media">
+            <div class="stat-icon purple">🖼️</div>
+            <div><div class="stat-count" id="stat-media">—</div><div class="stat-label">Media galleries</div></div>
+          </div>
+          <div class="stat-card" data-view="favorites">
+            <div class="stat-icon gold">★</div>
+            <div><div class="stat-count" id="stat-fav">—</div><div class="stat-label">Favourites</div></div>
+          </div>
+        </div>
+
+        <div class="items-grid" id="items-grid">
+          <div class="skeleton" style="height:120px;border-radius:10px"></div>
+          <div class="skeleton" style="height:120px;border-radius:10px"></div>
+          <div class="skeleton" style="height:120px;border-radius:10px"></div>
+          <div class="skeleton" style="height:120px;border-radius:10px"></div>
+          <div class="skeleton" style="height:120px;border-radius:10px"></div>
+          <div class="skeleton" style="height:120px;border-radius:10px"></div>
+        </div>
+
+        <div class="empty-state hidden" id="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>Nothing here</h3>
+          <p id="empty-msg">Add your first item to get started</p>
+        </div>
+      </div>
+
+      <aside class="detail-panel collapsed" id="detail-panel"></aside>
+    </div>
+  </div>
+</div>
+
+<button class="fab" id="fab-btn" title="Add item">＋</button>
+<div id="toast-container"></div>
+
+<script src="../js/api.js"></script>
+<script src="../js/ui.js"></script>
+<script src="../js/media.js"></script>
+<script>
+if (!Auth.isLoggedIn()) window.location.href = 'login.html';
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let currentView = 'all', currentTypeFilter = '', searchQuery = '', currentItemId = null, allStats = {};
+
+// ── DOM refs ───────────────────────────────────────────────────────────────────
+const grid        = document.getElementById('items-grid');
+const detailPanel = document.getElementById('detail-panel');
+const emptyState  = document.getElementById('empty-state');
+const emptyMsg    = document.getElementById('empty-msg');
+const viewTitle   = document.getElementById('view-title');
+const statsBar    = document.getElementById('stats-bar');
+const filterTabs  = document.getElementById('filter-tabs');
+
+// ── Load user ──────────────────────────────────────────────────────────────────
+async function loadUser() {
+  try {
+    const user = await api.auth.me();
+    document.getElementById('user-name').textContent = user.name || user.email;
+    document.getElementById('user-avatar').textContent = (user.name || user.email).charAt(0).toUpperCase();
+  } catch {}
+}
+
+// ── Load stats ─────────────────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    allStats = await api.stats.get();
+    const s = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || 0; };
+    s('stat-total',     allStats.total);
+    s('stat-passwords', allStats.byType?.password);
+    s('stat-secrets',   allStats.byType?.secret);
+    s('stat-media',     allStats.byType?.media);
+    s('stat-fav',       allStats.favorites);
+    s('count-all',      allStats.total);
+    s('count-fav',      allStats.favorites);
+    s('count-trash',    allStats.inTrash);
+    s('count-password', allStats.byType?.password);
+    s('count-secret',   allStats.byType?.secret);
+    s('count-note',     allStats.byType?.note);
+    s('count-card',     allStats.byType?.card);
+    s('count-identity', allStats.byType?.identity);
+    s('count-media',    allStats.byType?.media);
+  } catch {}
+}
+
+// ── Pending requests badge ─────────────────────────────────────────────────────
+async function refreshPendingBadge() {
+  try {
+    const reqs  = await api.share.listPending();
+    const count = reqs.length;
+    const badge = document.getElementById('count-requests');
+    const dot   = document.getElementById('pending-dot');
+    if (count > 0) {
+      badge.textContent = count; badge.style.display = ''; dot.style.display = 'block';
+    } else {
+      badge.style.display = 'none'; dot.style.display = 'none';
+    }
+  } catch {}
+}
+
+// ── Load items ─────────────────────────────────────────────────────────────────
+async function loadItems() {
+  grid.innerHTML = Array(6).fill('<div class="skeleton" style="height:120px;border-radius:10px"></div>').join('');
+  emptyState.classList.add('hidden');
+  try {
+    if (currentView === 'trash') { renderTrash(await api.trash.list()); return; }
+    const params = { search: searchQuery };
+    if (currentView === 'favorites')  params.favorite = 'true';
+    else if (currentView !== 'all')   params.type = currentView;
+    if (currentTypeFilter)            params.type = currentTypeFilter;
+    renderItems((await api.items.list(params)).items || []);
+  } catch (err) {
+    grid.innerHTML = '';
+    Toast.error('Failed to load: ' + err.message);
+  }
+}
+
+// ── Render items ───────────────────────────────────────────────────────────────
+function renderItems(items) {
+  if (!items.length) {
+    grid.innerHTML = '';
+    emptyState.classList.remove('hidden');
+    emptyMsg.textContent = searchQuery ? `No results for "${searchQuery}"` : 'No items yet. Click ＋ to add one.';
+    return;
+  }
+  emptyState.classList.add('hidden');
+  grid.innerHTML = items.map(item => {
+    if (item.type === 'media') {
+      return `<div class="item-card type-media animate-fade" data-id="${item.id}" data-type="media"
+                style="position:relative;overflow:hidden">
+        <div class="item-card-header">
+          <div class="item-type-icon" style="background:rgba(167,139,250,0.12)">🖼️</div>
+          <div style="flex:1;overflow:hidden">
+            <div class="item-card-title">${escapeHtml(item.title)}</div>
+            <div class="item-card-sub">Media gallery — click to open</div>
+          </div>
+        </div>
+        <div class="item-card-footer">
+          <div class="item-tags">${(item.tags||[]).slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          <button class="item-fav-btn ${item.is_favorite?'active':''}" data-id="${item.id}">★</button>
+        </div>
+      </div>`;
+    }
+    return buildItemCard(item);
+  }).join('');
+
+  grid.querySelectorAll('.item-card').forEach(card => {
+    card.addEventListener('click', async e => {
+      if (e.target.classList.contains('item-fav-btn')) return;
+      if (card.dataset.type === 'media') {
+        try { openMediaModal(await api.items.get(card.dataset.id)); }
+        catch (err) { Toast.error(err.message); }
+        return;
+      }
+      openDetail(card.dataset.id);
+    });
+  });
+
+  grid.querySelectorAll('.item-fav-btn').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      try {
+        await api.items.update(btn.dataset.id, { is_favorite: !btn.classList.contains('active') });
+        btn.classList.toggle('active');
+        loadStats();
+      } catch (err) { Toast.error(err.message); }
+    });
+  });
+}
+
+// ── Render trash ───────────────────────────────────────────────────────────────
+function renderTrash(items) {
+  if (!items.length) {
+    grid.innerHTML = ''; emptyState.classList.remove('hidden');
+    emptyMsg.textContent = 'Trash is empty.'; return;
+  }
+  emptyState.classList.add('hidden');
+  grid.innerHTML = items.map(item => `
+    <div class="item-card type-${item.type} animate-fade" style="opacity:0.65">
+      <div class="item-card-header">
+        <div class="item-type-icon ${item.type}">${ITEM_TYPES[item.type]?.icon||'🗂️'}</div>
+        <div style="flex:1">
+          <div class="item-card-title">${escapeHtml(item.title)}</div>
+          <div class="item-card-sub">Deleted ${timeAgo(item.deleted_at)}</div>
+        </div>
+      </div>
+      <div class="item-card-footer">
+        <button class="btn btn-ghost btn-sm restore-btn" data-id="${item.id}">↩ Restore</button>
+        <button class="btn btn-danger btn-sm hard-delete-btn" data-id="${item.id}">✕ Delete forever</button>
+      </div>
+    </div>`).join('');
+
+  grid.querySelectorAll('.restore-btn').forEach(btn =>
+    btn.addEventListener('click', async () => {
+      try { await api.items.restore(btn.dataset.id); Toast.success('Restored'); loadItems(); loadStats(); }
+      catch (err) { Toast.error(err.message); }
+    }));
+  grid.querySelectorAll('.hard-delete-btn').forEach(btn =>
+    btn.addEventListener('click', async () => {
+      if (!confirm('Permanently delete? Cannot be undone.')) return;
+      try { await api.items.deletePermanent(btn.dataset.id); Toast.success('Deleted permanently'); loadItems(); loadStats(); }
+      catch (err) { Toast.error(err.message); }
+    }));
+}
+
+// ── Detail panel ───────────────────────────────────────────────────────────────
+async function openDetail(id) {
+  currentItemId = id;
+  detailPanel.classList.remove('collapsed');
+  detailPanel.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%">
+    <div class="spinner" style="width:28px;height:28px;border-width:3px;color:var(--gold)"></div></div>`;
+  try {
+    const item = await api.items.get(id);
+    // Inject share button into detail panel
+    let panelHtml = buildDetailPanel(item);
+    panelHtml = panelHtml.replace(
+      '<button class="btn btn-danger btn-sm" id="delete-item-btn"',
+      `<button class="btn btn-secondary btn-sm" id="share-item-btn" title="Generate share code">🔗 Share</button>
+       <button class="btn btn-danger btn-sm" id="delete-item-btn"`
+    );
+    detailPanel.innerHTML = panelHtml;
+    attachDetailEvents(item);
+    document.querySelectorAll('.item-card').forEach(c => c.style.borderColor = '');
+    document.querySelector(`.item-card[data-id="${id}"]`)?.style.setProperty('border-color', 'var(--border-glow)');
+  } catch (err) {
+    detailPanel.classList.add('collapsed');
+    Toast.error('Could not load item: ' + err.message);
+  }
+}
+
+function attachDetailEvents(item) {
+  document.getElementById('close-detail-btn')?.addEventListener('click', closeDetail);
+
+  detailPanel.querySelectorAll('.reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = document.getElementById('field-' + btn.dataset.field);
+      const hidden = el.classList.contains('masked');
+      el.textContent = hidden ? btn.dataset.val : '••••••••••••';
+      el.classList.toggle('masked', !hidden);
+      btn.textContent = hidden ? '🙈 Hide' : '👁 Reveal';
+    });
+  });
+
+  detailPanel.querySelectorAll('.copy-btn').forEach(btn =>
+    btn.addEventListener('click', () => copyToClipboard(btn.dataset.val, btn.dataset.label)));
+
+  document.getElementById('share-item-btn')?.addEventListener('click', async () => {
+    const label = prompt('Label this share code (optional):\ne.g. "For Alice"') ?? '';
+    try {
+      const result = await api.share.createCode(item.id, label);
+      await copyToClipboard(result.share_code.code, 'Share code');
+      Toast.success(`Code ${result.share_code.code} copied to clipboard! Send it to your friend.`);
+    } catch (err) { Toast.error(err.message); }
+  });
+
+  document.getElementById('edit-item-btn')?.addEventListener('click', () => openEditModal(item));
+
+  document.getElementById('delete-item-btn')?.addEventListener('click', async () => {
+    if (!confirm(`Move "${item.title}" to trash?`)) return;
+    try {
+      await api.items.delete(item.id);
+      Toast.success('Moved to trash');
+      closeDetail(); loadItems(); loadStats();
+    } catch (err) { Toast.error(err.message); }
+  });
+}
+
+function closeDetail() {
+  detailPanel.classList.add('collapsed');
+  currentItemId = null;
+  document.querySelectorAll('.item-card').forEach(c => c.style.borderColor = '');
+}
+
+// ── Add modal ──────────────────────────────────────────────────────────────────
+function openAddModal(defaultType = 'password') {
+  let selectedType = defaultType;
+  window.ITEM_TYPES.media = { label: 'Media Gallery', icon: '🖼️', color: 'purple', fields: [] };
+
+  const modal = Modal.open({
+    title: 'Add New Item',
+    body: buildItemForm(selectedType),
+    footer: `<button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+             <button class="btn btn-primary" id="modal-save">Save Item</button>`,
+  });
+  const ov = modal.overlay;
+
+  const rebuildForm = type => {
+    selectedType = type;
+    ov.querySelector('.modal-body').innerHTML = buildItemForm(type);
+    ov.querySelector('[name=type]').value = type;
+    ov.querySelector('[name=type]')?.addEventListener('change', e => rebuildForm(e.target.value));
+    attachTogglePw(ov);
+  };
+  ov.querySelector('[name=type]')?.addEventListener('change', e => rebuildForm(e.target.value));
+  attachTogglePw(ov);
+
+  ov.querySelector('#modal-cancel').addEventListener('click', Modal.close);
+  ov.querySelector('#modal-save').addEventListener('click', async () => {
+    const payload = collectPayload(ov, selectedType);
+    if (!payload.title) return Toast.error('Title is required');
+    const btn = ov.querySelector('#modal-save');
+    btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
+    try {
+      const newItem = await api.items.create(payload);
+      Modal.close();
+      Toast.success('Item added to vault');
+      if (selectedType === 'media') {
+        const full = await api.items.get(newItem.id);
+        setTimeout(() => openMediaModal(full), 300);
+      }
+      loadItems(); loadStats();
+    } catch (err) {
+      Toast.error(err.message); btn.disabled = false; btn.textContent = 'Save Item';
+    }
+  });
+}
+
+// ── Edit modal ─────────────────────────────────────────────────────────────────
+function openEditModal(item) {
+  const modal = Modal.open({
+    title: 'Edit Item',
+    body: buildItemForm(item.type, item),
+    footer: `<button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+             <button class="btn btn-primary" id="modal-save">Save Changes</button>`,
+  });
+  const ov = modal.overlay;
+  attachTogglePw(ov);
+  ov.querySelector('#modal-cancel').addEventListener('click', Modal.close);
+  ov.querySelector('#modal-save').addEventListener('click', async () => {
+    const payload = collectPayload(ov, item.type);
+    if (!payload.title) return Toast.error('Title is required');
+    const btn = ov.querySelector('#modal-save');
+    btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
+    try {
+      await api.items.update(item.id, payload);
+      Modal.close(); Toast.success('Item updated');
+      openDetail(item.id); loadItems(); loadStats();
+    } catch (err) {
+      Toast.error(err.message); btn.disabled = false; btn.textContent = 'Save Changes';
+    }
+  });
+}
+
+function collectPayload(ov, type) {
+  const g = n => ov.querySelector(`[name="${n}"]`)?.value?.trim() || '';
+  const tags = g('tags').split(',').map(t => t.trim()).filter(Boolean);
+  const is_favorite = ov.querySelector('[name="is_favorite"]')?.checked ?? false;
+  const fields = {
+    password: { username: g('username'), secret: g('secret'), url: g('url') },
+    secret:   { secret: g('secret') },
+    note:     { content: g('content') },
+    card:     { card_number: g('card_number'), expiry: g('expiry'), cvv: g('cvv'), cardholder: g('cardholder') },
+    identity: { first_name: g('first_name'), last_name: g('last_name'), phone: g('phone'), address: g('address') },
+    media:    {},
+  };
+  return { type, title: g('title'), notes: g('notes'), tags, is_favorite, ...(fields[type] || {}) };
+}
+
+function attachTogglePw(container) {
+  container.querySelectorAll('.toggle-pw').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp = btn.closest('.input-wrapper').querySelector('input');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+    });
+  });
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────────
+const VIEW_TITLES = {
+  all:'All Items', favorites:'Favourites', trash:'Trash',
+  password:'Passwords', secret:'Secrets', note:'Notes',
+  card:'Cards', identity:'Identities', media:'Media Galleries',
+};
+
+function switchView(view) {
+  currentView = view; currentTypeFilter = ''; searchQuery = '';
+  document.getElementById('search-input').value = '';
+  document.querySelectorAll('.nav-item[data-view]').forEach(i =>
+    i.classList.toggle('active', i.dataset.view === view));
+  viewTitle.textContent = VIEW_TITLES[view] || view;
+  const isTrash = view === 'trash';
+  statsBar.style.display  = (view === 'all' || view === 'favorites') ? '' : 'none';
+  filterTabs.style.display = isTrash ? 'none' : '';
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.filter-tab[data-type=""]')?.classList.add('active');
+  closeDetail();
+  loadItems();
+}
+
+document.querySelectorAll('.nav-item[data-view]').forEach(i =>
+  i.addEventListener('click', () => switchView(i.dataset.view)));
+
+document.getElementById('nav-requests').addEventListener('click', openPendingRequestsModal);
+
+document.querySelectorAll('.stat-card[data-view]').forEach(c =>
+  c.addEventListener('click', () => switchView(c.dataset.view)));
+
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTypeFilter = tab.dataset.type;
+    closeDetail(); loadItems();
+  });
+});
+
+let searchTimer;
+document.getElementById('search-input').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { searchQuery = e.target.value.trim(); loadItems(); }, 350);
+});
+
+document.getElementById('add-btn').addEventListener('click', () => openAddModal());
+document.getElementById('fab-btn').addEventListener('click', () => openAddModal());
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  try { await api.auth.logout(); } finally { window.location.href = 'login.html'; }
+});
+
+// Handle approve/deny actions from email deep links
+// e.g. dashboard.html?action=approve&requestId=xxx
+(async () => {
+  const p = new URLSearchParams(window.location.search);
+  const action = p.get('action'), reqId = p.get('requestId');
+  if (action && reqId && ['approve','deny'].includes(action)) {
+    try {
+      await api.share.respond(reqId, action);
+      Toast.success(action === 'approve'
+        ? '✓ Access approved — accessor has been emailed'
+        : '✕ Access denied — accessor has been notified');
+    } catch (err) { Toast.error('Could not process: ' + err.message); }
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+})();
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+loadUser();
+loadStats();
+loadItems();
+refreshPendingBadge();
+setInterval(refreshPendingBadge, 30_000);
+</script>
+</body>
+</html>

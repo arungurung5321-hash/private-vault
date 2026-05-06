@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault — Access Shared Item</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/auth.css">
+  <style>
+    .access-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: var(--bg-deep);
+    }
+    .access-box {
+      width: 100%;
+      max-width: 480px;
+      animation: fadeIn 0.4s ease;
+    }
+    .access-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      justify-content: center;
+    }
+    .access-logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .access-logo-name {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--text-primary);
+    }
+    .access-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+    }
+    .access-title {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+    .access-sub {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .code-input {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      letter-spacing: 0.25em;
+      text-align: center;
+      text-transform: uppercase;
+      background: var(--bg-raised);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      color: var(--gold);
+      width: 100%;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .code-input:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .code-input::placeholder { color: var(--text-muted); letter-spacing: 0.15em; font-size: 1rem; }
+
+    /* ── Pending state ── */
+    .pending-box {
+      text-align: center;
+      padding: 32px 0 8px;
+    }
+    .pending-icon { font-size: 3rem; margin-bottom: 16px; animation: pulse 2s ease infinite; }
+    .pending-title { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; color: var(--text-primary); }
+    .pending-sub { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── Shared content view ── */
+    .shared-item-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .shared-type-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      background: rgba(201,168,76,0.12);
+    }
+    .shared-by { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 2px; }
+    .shared-title { font-family: var(--font-display); font-size: 1.4rem; color: var(--text-primary); }
+
+    .shared-field { margin-bottom: 16px; }
+    .shared-field-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .shared-field-value {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .copy-inline { color: var(--text-muted); font-size: 0.8rem; cursor: pointer; flex-shrink: 0; transition: color var(--transition); }
+    .copy-inline:hover { color: var(--gold); }
+
+    /* ── Media gallery ── */
+    .media-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .media-thumb {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      aspect-ratio: 1;
+      position: relative;
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .media-thumb:hover { border-color: var(--gold-dim); }
+    .media-thumb img, .media-thumb video {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .media-thumb-overlay {
+      position: absolute; inset: 0;
+      background: rgba(8,11,16,0.6);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity var(--transition);
+    }
+    .media-thumb:hover .media-thumb-overlay { opacity: 1; }
+    .media-file-card {
+      border-radius: var(--radius-md);
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color var(--transition);
+    }
+    .media-file-card:hover { border-color: var(--gold-dim); }
+    .file-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .file-name { font-size: 0.85rem; color: var(--text-primary); word-break: break-all; }
+    .file-size { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+    .expiry-notice {
+      margin-top: 24px;
+      padding: 12px 16px;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      color: var(--gold-dim);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="access-page">
+    <div class="access-box">
+
+      <div class="access-logo">
+        <div class="access-logo-icon">🔐</div>
+        <span class="access-logo-name">Vault</span>
+      </div>
+
+      <!-- ── STEP 1: Enter code ── -->
+      <div class="access-card" id="step-code">
+        <div class="access-title">Access Shared Item</div>
+        <div class="access-sub">Enter the share code and your email. The owner will be notified and must approve your request before you can view anything.</div>
+
+        <div id="access-error" class="auth-error hidden" style="margin-bottom:16px">
+          <span>⚠</span><span id="access-error-text"></span>
+        </div>
+
+        <form id="access-form" novalidate>
+          <div class="form-group" style="margin-bottom:16px">
+            <label class="form-label">Share Code</label>
+            <input class="code-input" id="code-input" name="code" maxlength="8" placeholder="XXXXXXXX" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="form-group" style="margin-bottom:16px">
+            <label class="form-label">Your Email *</label>
+            <input class="form-input" id="accessor-email" name="accessor_email" type="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group" style="margin-bottom:24px">
+            <label class="form-label">Your Name (optional)</label>
+            <input class="form-input" id="accessor-name" name="accessor_name" type="text" placeholder="So the owner knows who you are">
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" type="submit" id="request-btn">Request Access</button>
+        </form>
+      </div>
+
+      <!-- ── STEP 2: Pending ── -->
+      <div class="access-card hidden" id="step-pending">
+        <div class="pending-box">
+          <div class="pending-icon">⏳</div>
+          <div class="pending-title">Request Sent!</div>
+          <div class="pending-sub">
+            The owner has been emailed and will approve or deny your request.<br><br>
+            <strong style="color:var(--text-primary)">Check your inbox</strong> — you'll receive an email once they respond.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Approved — view shared content ── -->
+      <div class="access-card hidden" id="step-content">
+        <div id="shared-content"></div>
+        <div class="expiry-notice">⏱ This access link expires in 1 hour. Download any files you need now.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    const API_BASE = 'http://localhost:4000/api';
+    const params = new URLSearchParams(window.location.search);
+    const codeParam     = params.get('code');
+    const requestId     = params.get('requestId');
+    const token         = params.get('token');
+
+    const stepCode    = document.getElementById('step-code');
+    const stepPending = document.getElementById('step-pending');
+    const stepContent = document.getElementById('step-content');
+    const errorEl     = document.getElementById('access-error');
+    const errorText   = document.getElementById('access-error-text');
+
+    function showError(msg) {
+      errorEl.classList.remove('hidden');
+      errorText.textContent = msg;
+    }
+
+    // Pre-fill code from URL param
+    if (codeParam) {
+      document.getElementById('code-input').value = codeParam.toUpperCase();
+    }
+
+    // If arriving from approval email link — fetch content directly
+    if (requestId && token) {
+      stepCode.classList.add('hidden');
+      stepPending.classList.add('hidden');
+      stepContent.classList.remove('hidden');
+      loadApprovedContent(requestId, token);
+    }
+
+    // ── Submit access request ──
+    document.getElementById('access-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.add('hidden');
+
+      const code           = document.getElementById('code-input').value.trim().toUpperCase();
+      const accessor_email = document.getElementById('accessor-email').value.trim();
+      const accessor_name  = document.getElementById('accessor-name').value.trim();
+
+      if (!code || code.length < 6) return showError('Please enter a valid share code.');
+      if (!accessor_email)          return showError('Your email is required.');
+
+      const btn = document.getElementById('request-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Sending request…';
+
+      try {
+        const res = await fetch(`${API_BASE}/share/request`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, accessor_email, accessor_name }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Request failed');
+
+        stepCode.classList.add('hidden');
+        stepPending.classList.remove('hidden');
+      } catch (err) {
+        showError(err.message);
+        btn.disabled = false;
+        btn.textContent = 'Request Access';
+      }
+    });
+
+    // ── Load approved content ──
+    async function loadApprovedContent(requestId, token) {
+      const content = document.getElementById('shared-content');
+      content.innerHTML = '<div style="text-align:center;padding:40px"><div class="spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto"></div><p style="margin-top:16px;color:var(--text-muted)">Loading shared content…</p></div>';
+
+      try {
+        const res = await fetch(`${API_BASE}/share/view?requestId=${requestId}&token=${token}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Could not load content');
+
+        const { item, files, shared_by } = data.data;
+        const typeConfig = {
+          password: { icon: '🔑', label: 'Password' },
+          secret:   { icon: '🗝️', label: 'Secret' },
+          note:     { icon: '📋', label: 'Note' },
+          card:     { icon: '💳', label: 'Card' },
+          identity: { icon: '🪪',  label: 'Identity' },
+          media:    { icon: '🖼️', label: 'Media Gallery' },
+        };
+        const tc = typeConfig[item.type] || { icon: '📦', label: item.type };
+
+        const fieldMap = {
+          username: 'Username', url: 'Website URL', content: 'Content',
+          first_name: 'First Name', last_name: 'Last Name',
+          phone: 'Phone', address: 'Address',
+          cardholder: 'Cardholder', expiry: 'Expiry', notes: 'Notes',
+        };
+
+        const fieldsHtml = Object.entries(fieldMap).map(([key, label]) => {
+          if (!item[key]) return '';
+          return `
+            <div class="shared-field">
+              <div class="shared-field-label">${label}</div>
+              <div class="shared-field-value">
+                <span>${escapeHtml(item[key])}</span>
+                <span class="copy-inline" onclick="copyToClipboard('${escapeHtml(item[key])}', '${label}')">⎘ Copy</span>
+              </div>
+            </div>`;
+        }).join('');
+
+        // Media files
+        let filesHtml = '';
+        if (files && files.length) {
+          const images = files.filter(f => f.mime_type.startsWith('image/'));
+          const videos = files.filter(f => f.mime_type.startsWith('video/'));
+          const others = files.filter(f => !f.mime_type.startsWith('image/') && !f.mime_type.startsWith('video/'));
+
+          const imgGrid = images.length ? `
+            <div class="media-gallery">
+              ${images.map(f => `
+                <div class="media-thumb" onclick="window.open('${f.signed_url}','_blank')">
+                  <img src="${f.signed_url}" alt="${escapeHtml(f.original_name)}" loading="lazy">
+                  <div class="media-thumb-overlay">🔍</div>
+                </div>`).join('')}
+            </div>` : '';
+
+          const vidGrid = videos.length ? `
+            <div class="media-gallery" style="margin-top:12px">
+              ${videos.map(f => `
+                <div class="media-thumb">
+                  <video src="${f.signed_url}" controls preload="none" style="width:100%;height:100%;object-fit:cover"></video>
+                </div>`).join('')}
+            </div>` : '';
+
+          const otherList = others.length ? `
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+              ${others.map(f => {
+                const icons = { 'application/pdf': '📄', 'application/zip': '🗜️', 'text/': '📝' };
+                const icon = Object.entries(icons).find(([k]) => f.mime_type.startsWith(k))?.[1] || '📁';
+                const size = f.size_bytes > 1024*1024
+                  ? `${(f.size_bytes/1024/1024).toFixed(1)} MB`
+                  : `${Math.round(f.size_bytes/1024)} KB`;
+                return `
+                  <div class="media-file-card" onclick="window.open('${f.signed_url}','_blank')">
+                    <span class="file-icon">${icon}</span>
+                    <div>
+                      <div class="file-name">${escapeHtml(f.original_name)}</div>
+                      <div class="file-size">${size}</div>
+                    </div>
+                    <span style="margin-left:auto;color:var(--text-muted);font-size:0.8rem">⬇ Download</span>
+                  </div>`;
+              }).join('')}
+            </div>` : '';
+
+          filesHtml = `
+            <div class="shared-field">
+              <div class="shared-field-label">Files (${files.length})</div>
+            </div>
+            ${imgGrid}${vidGrid}${otherList}`;
+        }
+
+        content.innerHTML = `
+          <div class="shared-item-header">
+            <div class="shared-type-icon">${tc.icon}</div>
+            <div>
+              <div class="shared-by">Shared by ${escapeHtml(shared_by || 'Unknown')}</div>
+              <div class="shared-title">${escapeHtml(item.title)}</div>
+            </div>
+          </div>
+          ${fieldsHtml}
+          ${filesHtml}
+        `;
+      } catch (err) {
+        content.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <h3>Cannot load content</h3>
+            <p>${escapeHtml(err.message)}</p>
+          </div>`;
+      }
+    }
+
+    // Auto-uppercase code input
+    document.getElementById('code-input').addEventListener('input', function() {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+  </script>
+</body>
+</html>
