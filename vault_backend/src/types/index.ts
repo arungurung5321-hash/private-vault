@@ -1,0 +1,10 @@
+import { Request } from "express";
+export interface AuthRequest extends Request { user?: { id: string; email: string; role: string; }; }
+export type VaultItemType = "password" | "secret" | "note" | "card" | "identity" | "media";
+export interface User { id: string; email: string; name: string | null; role: string; created_at: string; updated_at: string; }
+export interface VaultFolder { id: string; user_id: string; name: string; icon: string | null; color: string | null; created_at: string; updated_at: string; }
+export interface VaultItem { id: string; user_id: string; folder_id: string | null; type: VaultItemType; title: string; is_favorite: boolean; is_deleted: boolean; tags: string[]; username?: string | null; secret?: string | null; url?: string | null; content?: string | null; card_number?: string | null; expiry?: string | null; cvv?: string | null; cardholder?: string | null; first_name?: string | null; last_name?: string | null; phone?: string | null; address?: string | null; notes?: string | null; deleted_at?: string | null; created_at: string; updated_at: string; }
+export interface MediaFile { id: string; user_id: string; vault_item_id: string; filename: string; original_name: string; mime_type: string; size_bytes: number; storage_path: string; storage_bucket: string; created_at: string; }
+export interface ShareCode { id: string; user_id: string; vault_item_id: string; code: string; label: string | null; status: string; used_at: string | null; created_at: string; }
+export interface ShareRequest { id: string; share_code_id: string; accessor_email: string; accessor_name: string | null; ip_address: string | null; status: string; requested_at: string; responded_at: string | null; }
+export interface ApiResponse<T = unknown> { success: boolean; message?: string; data?: T; error?: string; details?: string[]; }

@@ -1,0 +1,13 @@
+import { Router } from "express";
+import { register, verifyOtp, login, refresh, logout, me, updateMe } from "../controllers/authController";
+import { authenticate } from "../middleware/auth";
+import { validate } from "../middleware/validate";
+const router = Router();
+router.post("/register", register);
+router.post("/verify-otp", verifyOtp);
+router.post("/login", validate({ email: { required: true, type: "email" }, password: { required: true, type: "string" } }), login);
+router.post("/refresh", validate({ refreshToken: { required: true, type: "string" } }), refresh);
+router.post("/logout", authenticate, logout);
+router.get("/me", authenticate, me);
+router.put("/me", authenticate, updateMe);
+export default router;

@@ -1,0 +1,37 @@
+{
+  "name": "vault-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Express + PostgreSQL REST API for my-vault-app",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "db:migrate": "tsx src/lib/migrate.ts",
+    "db:migrate:v2": "tsx src/lib/migrate_v2.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.1.1",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/morgan": "^1.9.9",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.0.0"
+  }
+}

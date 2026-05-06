@@ -1,0 +1,14 @@
+import { Router } from "express";
+import { authenticate } from "../middleware/auth";
+import { validate } from "../middleware/validate";
+import { createShareCode, listShareCodes, revokeShareCode, listPendingRequests, respondToRequest, submitAccessRequest, viewSharedItem } from "../controllers/shareController";
+const router = Router();
+router.post("/request", validate({ code: { required: true, type: "string" }, accessor_email: { required: true, type: "email" } }), submitAccessRequest);
+router.get("/view", viewSharedItem);
+router.use(authenticate);
+router.post("/items/:itemId/share", createShareCode);
+router.get("/items/:itemId/shares", listShareCodes);
+router.delete("/items/:itemId/shares/:codeId", revokeShareCode);
+router.get("/pending", listPendingRequests);
+router.post("/respond/:requestId", validate({ action: { required: true, type: "string", enum: ["approve","deny"] } }), respondToRequest);
+export default router;
