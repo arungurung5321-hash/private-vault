@@ -1,0 +1,10 @@
+name: itemId
+variables:
+  - name: baseUrl
+    value: https://vault-backend-1088002323346.us-central1.run.app/api
+  - name: token
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0MTVmOWM5LTYwNzctNDAwMy1hYzhkLWQxZGY4NDEyMDcwMiIsImVtYWlsIjoiYXJ1bmd1cnVuZzUzMjFAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NzgwMTczMDgsImV4cCI6MTc3ODYyMjEwOH0.HsEFvNLV-iuwCyRBSEdj6WJclzakWTA4K1YkfRc954U
+  - name: itemId
+    value: 2b28ada5-7095-4584-acbc-a53ff00880e1
+  - name: mediaItemId
+    value: e6bf01ba-21f3-42b3-ae4d-39751a6c3649

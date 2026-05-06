@@ -1,0 +1,23 @@
+info:
+  name: Create Share Code
+  type: http
+  seq: 11
+
+http:
+  method: POST
+  url: "{{baseUrl}}/share/items/{{mediaItemId}}/share"
+  body:
+    type: json
+    data: |
+      {
+        "label": "For friend"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

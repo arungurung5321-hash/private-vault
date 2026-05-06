@@ -1,0 +1,28 @@
+info:
+  name: Create Vault Item
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}/vault/items"
+  body:
+    type: json
+    data: |
+      {
+        "type": "password",
+        "title": "My GitHub",
+        "username": "arun@github.com",
+        "secret": "securepass123",
+        "url": "https://github.com",
+        "tags": ["dev"]
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

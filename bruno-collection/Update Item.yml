@@ -1,0 +1,24 @@
+info:
+  name: Update Item
+  type: http
+  seq: 7
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/vault/items/{{itemId}}"
+  body:
+    type: json
+    data: |
+      {
+        "title": "Updated GitHub Account",
+        "username": "arun_updated@github.com"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

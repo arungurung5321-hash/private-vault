@@ -1,0 +1,22 @@
+info:
+  name: Request Share Access
+  type: http
+  seq: 13
+
+http:
+  method: POST
+  url: "{{baseUrl}}/share/request"
+  body:
+    type: json
+    data: |
+      {
+        "code": "YOURCODE",
+        "accessor_email": "friend@example.com",
+        "accessor_name": "Friend Name"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
